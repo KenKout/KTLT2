@@ -45,7 +45,7 @@ enum ElementType { PATH, WALL, FAKE_WALL };
 enum RobotType { C=0, S, W, SW };
 
 class MapElement {
-friend class TestStudyInPink;
+    friend class TestStudyInPink;
 protected:
     ElementType type;
 public:
@@ -55,19 +55,19 @@ public:
 };
 
 class Path : public MapElement {
-friend class TestStudyInPink;
+    friend class TestStudyInPink;
 public:
     Path();
 };
 
 class Wall : public MapElement {
-friend class TestStudyInPink;
+    friend class TestStudyInPink;
 public:
     Wall();
 };
 
 class FakeWall : public MapElement {
-friend class TestStudyInPink;
+    friend class TestStudyInPink;
 private:
     int req_exp;
 public:
@@ -76,7 +76,7 @@ public:
 };
 
 class Map {
-friend class TestStudyInPink;
+    friend class TestStudyInPink;
 private:
     int num_rows, num_cols;
     MapElement *** map;
@@ -90,7 +90,7 @@ public:
 };
 
 class Position {
-friend class TestStudyInPink;
+    friend class TestStudyInPink;
 private:
     int r, c;
 public:
@@ -112,7 +112,7 @@ public:
 };
 
 class MovingObject {
-friend class TestStudyInPink;
+    friend class TestStudyInPink;
 protected:
     int index;
     Position pos;
@@ -136,7 +136,7 @@ public:
 };
 
 class Sherlock : public Character {
-friend class TestStudyInPink;
+    friend class TestStudyInPink;
 private:
     string moving_rule;
     int hp;
@@ -147,26 +147,29 @@ public:
     Sherlock(int index, const string & moving_rule, const Position & init_pos, Map * map, int init_hp, int init_exp);
     Position getNextPosition();
     void move();
+    void move(const Position & next_pos);
     string str() const;
 
     int getHp() const  { return hp; }
     int getExp() const  { return exp; }
-    void setHp(int init_hp)   {
-        if (init_hp < 0) {
-            hp = 0;
-        } else if (init_hp > 500) {
-            hp = 500;
+    void setHp(float init_hp)  {
+        cout << "Sherlock setHp: " << init_hp << "\n";
+        if (init_hp < 0.0f) {
+            this->hp = 0;
+        } else if (init_hp > 500.0f) {
+            this->hp = 500;
         } else {
-            hp = init_hp;
+            this->hp = static_cast<int>(std::ceil(init_hp));
         }
     }
-    void setExp(int init_exp)  {
-        if (init_exp < 0) {
-            exp = 0;
-        } else if (init_exp > 900) {
-            exp = 900;
+    void setExp(float init_exp)  {
+        cout << "Sherlock setExp: " << init_exp << "\n";
+        if (init_exp < 0.0f) {
+            this->exp = static_cast<int>(std::ceil(init_exp));
+        } else if (init_exp > 900.0f) {
+            this->exp = 900;
         } else {
-            exp = init_exp;
+            this->exp = static_cast<int>(std::ceil(init_exp));
         }
     }
 
@@ -189,22 +192,22 @@ public:
     string str() const;
     int getHp() const { return hp; }
     int getExp() const { return exp; }
-    void setHp(int init_hp)  {
-        if (init_hp < 0) {
+    void setHp(float init_hp)  {
+        if (init_hp < 0.0f) {
             this->hp = 0;
-        } else if (init_hp > 500) {
+        } else if (init_hp > 500.0f) {
             this->hp = 500;
         } else {
-            this->hp = init_hp;
+            this->hp = static_cast<int>(std::ceil(init_hp));
         }
     }
-    void setExp(int init_exp)  {
-        if (init_exp < 0) {
-            this -> exp = init_exp;
-        } else if (init_exp > 900) {
-            this -> exp = 900;
+    void setExp(float init_exp)  {
+        if (init_exp < 0.0f) {
+            this->exp = static_cast<int>(std::ceil(init_exp));
+        } else if (init_exp > 900.0f) {
+            this->exp = 900;
         } else {
-            this -> exp = init_exp;
+            this->exp = static_cast<int>(std::ceil(init_exp));
         }
     }
 
@@ -228,7 +231,7 @@ public:
 
 
 class ArrayMovingObject {
-friend class TestStudyInPink;
+    friend class TestStudyInPink;
 private:
     MovingObject** arr_mv_objs; // Array of moving object pointers
     int count;                  // Current number of elements in the array
@@ -249,7 +252,6 @@ public:
 class Configuration {
     friend class StudyPinkProgram;
     friend class TestStudyInPink;
-    friend int main();
 
 
 private:
@@ -284,7 +286,8 @@ protected:
     BaseItem* item; // Pointer to the item the robot holds
     ItemType item_type; // Type of the item the robot holds
     Position init_pos; // Initial position of the robot
-    bool isdetected = false;
+    bool meetSherlock = false;
+    bool meetWatson = false;
 
 public:
     Robot(int index, const Position& init_pos, Map* map, RobotType robot_type);
@@ -303,8 +306,19 @@ public:
     // Function getItem
     BaseItem* getItem() const; // Get the item the robot holds
     Position returninitposition() const { return init_pos; }
-    bool getIsDetected() const { return isdetected; }
-    void setIsDetected(bool detected) { isdetected = detected; }
+    bool getMeet(Character* obj) const{
+        if (obj->getName() == "Sherlock")
+            return meetSherlock;
+        else if (obj->getName() == "Watson")
+            return meetWatson;
+        return false;
+    }
+    void setMeet(Character* obj, bool meet) {
+//        if (obj->getName() == "Sherlock")
+//            meetSherlock = meet;
+//        else if (obj->getName() == "Watson")
+//            meetWatson = meet;
+    }
 
 };
 
@@ -457,9 +471,9 @@ public:
 
 
 // End part: Robot, BaseItem, BaseBag,...
+
 class StudyPinkProgram {
-friend class TestStudyInPink;
-friend int main();
+    friend class TestStudyInPink;
 private:
     // Sample attributes
     Configuration * config;
@@ -494,8 +508,8 @@ public:
 
     void printStep(int si) const {
         cout << "Step: " << setw(4) << setfill('0') << si
-            << "--"
-            << sherlock->str() << "--|--" << watson->str() << "--|--" << criminal->str() << endl;
+             << "--"
+             << sherlock->str() << "--|--" << watson->str() << "--|--" << criminal->str() << endl;
     }
     void run(std::ostream &OUTPUT);
     void run(bool verbose) {
@@ -518,8 +532,100 @@ public:
         }
         printResult();
     }
-    void printMap(ostream &OUTPUT, int roundSize) const;
+    void printInfo(int si, int i, ofstream &OUTPUT)
+    {
+        OUTPUT << endl
+               << "*************AFTER MOVE*************" << endl;
+        OUTPUT
+                << "ROUND : " << si << " - TURN : " << i << endl;
+        stringstream ss(arr_mv_objs->str());
+        string lineArr = "";
+        getline(ss, lineArr, 'C');
+        OUTPUT << lineArr << "]" << endl;
+        getline(ss, lineArr, ']');
+        OUTPUT << "\tC" << lineArr << "]" << endl;
+        while (getline(ss, lineArr, ']'))
+        {
+            if (lineArr.length() > 0)
+                OUTPUT << "\t" << lineArr.substr(1) << "]" << endl;
+        }
+        OUTPUT << "Sherlock HP_" << sherlock->getHp() << " EXP_" << sherlock->getExp() << endl
+               << "Watson HP_" << watson->getHp() << " EXP_" << watson->getExp() << endl
+               << "SherlockBag : " << sherlock_bag->str() << endl
+               << "WatsonBag : " << watson_bag->str() << endl;
+    }
+    void run(bool verbose, ofstream &OUTPUT) {
+        bool stop = checkMeet(0) || sherlock->getHp() == 0 || watson->getHp() == 0 || criminal->getCurrentPosition().isEqual(sherlock->getCurrentPosition()) || criminal->getCurrentPosition().isEqual(watson->getCurrentPosition());
+        // bool stop = checkMeet(0) || sherlock->getHp() == 1 || watson->getHp() == 1 || criminal->getCurrentPosition().isEqual(sherlock->getCurrentPosition()) || criminal->getCurrentPosition().isEqual(watson->getCurrentPosition());
+        if (stop)
+        {
+            cout << "STOP1" << endl;
+            return;
+        }
+        for (int istep = 0; istep < config->num_steps; ++istep) {
+            for (int i = 0; i < arr_mv_objs->size(); ++i) {
+                cout << "ROUND : " << istep << " - TURN : " << i << endl;
+                arr_mv_objs->get(i)->move();
+
+                Robot *robot = nullptr;
+                if ((arr_mv_objs->get(i)->getName())== "Criminal")
+                {
+                    stop = checkMeet(i);
+                    if (stop) {
+                        cout << "STOP2" << endl;
+                        printInfo(istep, i, OUTPUT);
+                        return;
+                    }
+                    robot = Robot::create(arr_mv_objs->size(), map, criminal, sherlock, watson);
+                }
+                if (robot != nullptr)
+                {
+                    if (criminal->getCountCriminalMoves() % 3 == 0 && criminal->getCountCriminalMoves() > 0)
+                    {
+                        arr_mv_objs->add(robot);
+                    }
+                    else
+                    {
+                        delete robot;
+                    }
+                }
+                stop = checkMeet(i);
+                if (isStop()) {
+                    printInfo(istep, i, OUTPUT);
+                    return;
+                    //printStep(istep);
+                }
+                if (verbose) {
+                    //printStep(istep);
+                }
+                printInfo(istep, i, OUTPUT);
+
+            }
+        }
+    }
+    void printMap(ofstream &OUTPUT, int roundSize) const;
     bool checkMeet(int i) const;
+    void resetMeetAllRobot() {
+        for (int i = 3; i < arr_mv_objs->size(); ++i) { // Start from 3 because the first 3 elements are Sherlock, Watson, Criminal
+            if (arr_mv_objs->get(i)->getName() == "RobotC") {
+                RobotC *robot = dynamic_cast<RobotC *>(arr_mv_objs->get(i));
+                robot->setMeet(sherlock, false);
+                robot->setMeet(watson, false);
+            } else if (arr_mv_objs->get(i)->getName() == "RobotS") {
+                RobotS *robot = dynamic_cast<RobotS *>(arr_mv_objs->get(i));
+                robot->setMeet(sherlock, false);
+                robot->setMeet(watson, false);
+            } else if (arr_mv_objs->get(i)->getName() == "RobotW") {
+                RobotW *robot = dynamic_cast<RobotW *>(arr_mv_objs->get(i));
+                robot->setMeet(sherlock, false);
+                robot->setMeet(watson, false);
+            } else if (arr_mv_objs->get(i)->getName() == "RobotSW") {
+                RobotSW *robot = dynamic_cast<RobotSW *>(arr_mv_objs->get(i));
+                robot->setMeet(sherlock, false);
+                robot->setMeet(watson, false);
+            }
+        }
+    }
     ~StudyPinkProgram();
 };
 
