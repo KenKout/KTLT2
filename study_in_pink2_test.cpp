@@ -30,7 +30,7 @@ Map::Map(int num_rows, int num_cols, int num_walls, Position * array_walls, int 
         map[i] = new MapElement*[num_cols];
         for (int j = 0; j < num_cols; ++j) {
             map[i][j] = new Path(); // Initialize all elements as Path by default
-            cout << "Map[" << i << "][" << j << "] = " << map[i][j]->getType() << endl;
+            // cout << "Map[" << i << "][" << j << "] = " << map[i][j]->getType() << endl;
         }
     }
     // Place FakeWalls
@@ -40,7 +40,7 @@ Map::Map(int num_rows, int num_cols, int num_walls, Position * array_walls, int 
         int req_exp = (r * 257 + c * 139 + 89) % 900 + 1; // Calculate required EXP
         delete map[r][c]; // Clean up default Path before placing FakeWall
         map[r][c] = new FakeWall(req_exp);
-        cout << "FakeWall[" << i << "] = " << map[r][c]->getType() << endl;
+        // cout << "FakeWall[" << i << "] = " << map[r][c]->getType() << endl;
     }
     // Place Walls
     for (int i = 0; i < num_walls; ++i) {
@@ -48,7 +48,7 @@ Map::Map(int num_rows, int num_cols, int num_walls, Position * array_walls, int 
         int c = array_walls[i].getCol();
         delete map[r][c]; // Clean up default Path before placing Wall
         map[r][c] = new Wall();
-        cout << "Wall[" << i << "] = " << map[r][c]->getType() << endl;
+        // cout << "Wall[" << i << "] = " << map[r][c]->getType() << endl;
     }
 }
 Map::~Map() {
@@ -67,12 +67,12 @@ bool Map::isValid(const Position & pos, MovingObject * mv_obj) const {
     if (pos.getRow() < 0 || pos.getRow() >= num_rows || pos.getCol() < 0 || pos.getCol() >= num_cols) {
         return false;
     }
-    cout << "Checking position: " << pos.str() << endl;
+    // cout << "Checking position: " << pos.str() << endl;
     // Retrieve the MapElement at the given position
     MapElement* element = map[pos.getRow()][pos.getCol()];
     ElementType type = element->getType();
 
-    cout << "Element type: " << type << endl;
+    // cout << "Element type: " << type << endl;
     // Check the type of MapElement and apply the rules for movement
     switch (type) {
         case PATH:
@@ -159,11 +159,11 @@ Sherlock::Sherlock(int index, const string & moving_rule, const Position & init_
 Position Sherlock::getNextPosition() {
     if (move_index >= moving_rule.length()) move_index = 0; // Reset to start if at the end of moving_rule
     char move = moving_rule[move_index];
-    cout << "Move: " << move << endl;
+    // cout << "Move: " << move << endl;
     Position current_pos = getCurrentPosition();
     int r = current_pos.getRow();
     int c = current_pos.getCol();
-    cout << "Current position: " << r << " " << c << endl;
+    // cout << "Current position: " << r << " " << c << endl;
     switch (move) {
         case 'L': c -= 1; break; // Move left
         case 'R': c += 1; break; // Move right
@@ -183,7 +183,7 @@ void Sherlock::move() {
     Position next_pos = getNextPosition();
     if (next_pos != Position::npos) { // Fix overload operator != in headers
         pos = next_pos;
-        cout << "Sherlock moves to " << pos.str() << endl;
+        // cout << "Sherlock moves to " << pos.str() << endl;
     }
     ++move_index;
 }
@@ -409,7 +409,7 @@ Configuration::Configuration(const string & filepath)
             while (getline(fake_wall_stream, fake_wall, ';')) {
                 num_fake_walls++;
             }
-            cout << "Num fake walls: " << fake_walls << endl;
+            // cout << "Num fake walls: " << fake_walls << endl;
             arr_fake_walls = new Position[num_fake_walls];
             fake_wall_stream.clear();
             fake_wall_stream.str(fake_walls);
@@ -737,18 +737,18 @@ bool MagicBook::canUse(Character* obj, Robot * robot) {
 void MagicBook::use(Character* obj, Robot * robot) {
     if (dynamic_cast<Watson*>(obj) != nullptr)
     {
-        cout << "Watson uses MagicBook" << endl;
+        // cout << "Watson uses MagicBook" << endl;
         Watson *watson = dynamic_cast<Watson *>(obj);
         int exp = watson->getExp();
-        watson->setExp(exp + exp * 0.25);
+        watson->setEXP(exp + exp * 0.25);
     }
     else
     {
-        cout << "Sherlock uses MagicBook" << endl;
+        // cout << "Sherlock uses MagicBook" << endl;
         Sherlock *sherlock = dynamic_cast<Sherlock *>(obj);
         int exp = sherlock->getExp();
-        cout << exp + (exp * 0.25) << endl;
-        sherlock->setExp(exp + exp * 0.25);
+        // cout << exp + (exp * 0.25) << endl;
+        sherlock->setEXP(exp + exp * 0.25);
     }
 }
 
@@ -756,7 +756,7 @@ bool EnergyDrink::canUse(Character* obj, Robot * robot) {
     if (!dynamic_cast<Watson*>(obj) && !dynamic_cast<Sherlock*>(obj)) {
         return false;
     }
-    cout << "Checking if EnergyDrink can be used" << endl;
+    // cout << "Checking if EnergyDrink can be used" << endl;
     if (dynamic_cast<Watson*>(obj) != nullptr) {
         return dynamic_cast<Watson*>(obj)->getHp() <= 100;
     }
@@ -769,17 +769,17 @@ bool EnergyDrink::canUse(Character* obj, Robot * robot) {
 void EnergyDrink::use(Character* obj, Robot * robot) {
     if (dynamic_cast<Watson*>(obj) != nullptr)
     {
-        cout << "Watson uses EnergyDrink" << endl;
+        // cout << "Watson uses EnergyDrink" << endl;
         Watson *watson = dynamic_cast<Watson *>(obj);
         int hp = watson->getHp();
-        watson->setHp(hp + hp * 0.2);
+        watson->setHP(hp + hp * 0.2);
     }
     else
     {
-        cout << "Sherlock uses EnergyDrink" << endl;
+        // cout << "Sherlock uses EnergyDrink" << endl;
         Sherlock *sherlock = dynamic_cast<Sherlock *>(obj);
         int hp = sherlock->getHp();
-        sherlock->setHp(hp + hp * 0.2);
+        sherlock->setHP(hp + hp * 0.2);
     }
 }
 
@@ -798,15 +798,15 @@ bool FirstAid::canUse(Character* obj, Robot * robot) {
 
 void FirstAid::use(Character* obj, Robot * robot) {
     if (dynamic_cast<Watson*>(obj) != nullptr) {
-        cout << "Watson uses FirstAid" << endl;
+        // cout << "Watson uses FirstAid" << endl;
         Watson *watson = dynamic_cast<Watson *>(obj);
         int hp = watson->getHp();
-        watson->setHp(hp + hp * 0.5);
+        watson->setHP(hp + hp * 0.5);
     } else {
-        cout << "Sherlock uses FirstAid" << endl;
+        // cout << "Sherlock uses FirstAid" << endl;
         Sherlock *sherlock = dynamic_cast<Sherlock *>(obj);
         int hp = sherlock->getHp();
-        sherlock->setHp(hp + hp * 0.5);
+        sherlock->setHP(hp + hp * 0.5);
     }
 
 }
@@ -819,7 +819,7 @@ bool ExcemptionCard::canUse(Character* obj, Robot * robot) {
 }
 
 void ExcemptionCard::use(Character* obj, Robot * robot) {
-    cout << "Sherlock uses ExcemptionCard" << endl;
+    // cout << "Sherlock uses ExcemptionCard" << endl;
     // The ExcemptionCard has no effect on the character's parameters
 }
 
@@ -860,7 +860,7 @@ void PassingCard::use(Character* obj, Robot * robot) {
     }
     if (typerobot != challenge) {
         int exp = watson->getExp();
-        watson->setExp(exp - 50);
+        watson->setEXP(exp - 50);
     }
 }
 
@@ -882,7 +882,7 @@ BaseBag::BaseBag(Character* obj, int capacity) : obj(obj), capacity(capacity), c
 //}
 
 bool BaseBag::insert(BaseItem* item) {
-    cout << "Inserting item: " << getItemName(item) << endl;
+    // cout << "Inserting item: " << getItemName(item) << endl;
     if (count >= capacity) return false; // Check if the bag is full
     // Insert the item at the beginning of the list (array)
     for (int i = count; i > 0; --i) {
@@ -913,19 +913,20 @@ BaseItem* BaseBag::get() {
             return item;
         }
     }
+    return nullptr;
 }
 
 BaseItem* BaseBag::check() {
-    cout << "Checking the bag" << endl;
+    // cout << "Checking the bag" << endl;
     if (count == 0) return nullptr; // Check if the bag is empty
     BaseItem* item = items[0]; // Get the first item
     for (int i = 0; i < count ; ++i) {
         // If the item is a PassingCard or ExcemptionCard ignore it, else return the item
         if (!dynamic_cast<PassingCard*>(items[i]) && !dynamic_cast<ExcemptionCard*>(items[i])) {
-            cout << "Got Item: " << getItemName(items[i]) << endl;
-            cout << str() << endl;
+            // cout << "Got Item: " << getItemName(items[i]) << endl;
+            // cout << str() << endl;
             return items[i];
-            // cout str() bag
+            // // cout str() bag
         }
     }
     return nullptr;
@@ -1196,26 +1197,26 @@ BaseItem* createItem(Position pos){
 bool StudyPinkProgram::checkMeet(int i) const {
     // Case 1: Criminal
     if (arr_mv_objs->get(i)->getName() == "Criminal") {
-        cout << "Criminal moves, then check" << endl;
+        // cout << "Criminal moves, then check" << endl;
         // If the Criminal is at the same position as Sherlock, and Sherlock's HP is greater than 500, the Criminal will be caught
         if (arr_mv_objs->get(i)->getCurrentPosition().isEqual(sherlock->getCurrentPosition())) {
-            cout << "Sherlock caught the criminal" << endl;
+            // cout << "Sherlock caught the criminal" << endl;
             return true;
         }
         // If the Criminal is at the same position as Watson, the Criminal will be caught
         if (arr_mv_objs->get(i)->getCurrentPosition().isEqual(watson->getCurrentPosition())) {
-            cout << "Watson caught the criminal" << endl;
+            // cout << "Watson caught the criminal" << endl;
             return true;
         }
         return false;
     }
     // Case 2: Sherlock
     if (arr_mv_objs->get(i)->getName() == "Sherlock") {
-        cout << "Sherlock moves, then check" << endl;
+        // cout << "Sherlock moves, then check" << endl;
         for (int j = 0; j < arr_mv_objs->size(); ++j) {
             if (arr_mv_objs->get(j)->getName().substr(0, 5) == "Robot" &&
                 arr_mv_objs->get(i)->getCurrentPosition().isEqual(arr_mv_objs->get(j)->getCurrentPosition()) && dynamic_cast<Robot *>(arr_mv_objs->get(j))->getMeet(dynamic_cast<Character *>(arr_mv_objs->get(i))) == false) {
-                cout << "Sherlock meets Robot" << endl;
+                // cout << "Sherlock meets Robot" << endl;
 
                 Robot *robot = dynamic_cast<Robot *>(arr_mv_objs->get(j));
                 robot->setMeet(dynamic_cast<Character *>(arr_mv_objs->get(i)), true);
@@ -1223,7 +1224,7 @@ bool StudyPinkProgram::checkMeet(int i) const {
                 bool isexemptionCard = false;
                 BaseItem *exemptionCard = sherlock_bag->check(EXCEMPTION_CARD);
                 if (exemptionCard != nullptr && exemptionCard->canUse(sherlock, robot)) {
-                    cout << "Sherlock uses ExemptionCard" << endl;
+                    // cout << "Sherlock uses ExemptionCard" << endl;
                     exemptionCard->use(sherlock, robot);
                     sherlock_bag->get(exemptionCard);
                     // Receive the item from Robot
@@ -1233,31 +1234,31 @@ bool StudyPinkProgram::checkMeet(int i) const {
                 // Handle each type of robot
                 switch (robot->getRobotType()) {
                     case S: // RobotS
-                        cout << "Sherlock meets RobotS" << endl;
+                        // cout << "Sherlock meets RobotS" << endl;
                         if (sherlock->getExp() > 400) {
                             sherlock_bag->insert(robot->getItem());
 
                         } else {
                             if (!isexemptionCard)
-                                sherlock->setExp(sherlock->getExp() - sherlock->getExp() * 0.1);
+                                sherlock->setEXP(sherlock->getExp() - sherlock->getExp() * 0.1);
                         }
                         break;
                     case W: // RobotW
                         sherlock_bag->insert(robot->getItem());
                         break;
                     case SW: // RobotSW
-                        cout << "Sherlock meets RobotSW" << endl;
+                        // cout << "Sherlock meets RobotSW" << endl;
                         if (sherlock->getExp() > 300 && sherlock->getHp() > 335) {
                             sherlock_bag->insert(robot->getItem());
                         } else {
                             if (!isexemptionCard)
-                                sherlock->setExp(sherlock->getExp() - sherlock->getExp() * 0.15);
+                                sherlock->setEXP(sherlock->getExp() - sherlock->getExp() * 0.15);
                             if (!isexemptionCard)
-                                sherlock->setHp(sherlock->getHp() - sherlock->getHp() * 0.15);
+                                sherlock->setHP(sherlock->getHp() - sherlock->getHp() * 0.15);
                         }
                         break;
                     case C: // RobotC
-                        cout << "Sherlock meets RobotC" << endl;
+                        // cout << "Sherlock meets RobotC" << endl;
                         if (sherlock->getExp() > 500) {
                             sherlock->move(arr_mv_objs->get(0)->getCurrentPosition());
                             return true; // Sherlock caught the criminal
@@ -1268,9 +1269,9 @@ bool StudyPinkProgram::checkMeet(int i) const {
                 }
                 // Check if Sherlock has any item to heal or increase HP or EXP
                 BaseItem *item = sherlock_bag->check();
-                // cout name of item
+                // // cout name of item
                 if (item != nullptr && item->canUse(sherlock, robot)) {
-                    cout << "Sherlock uses Item" << endl;
+                    // cout << "Sherlock uses Item" << endl;
                     item->use(sherlock, robot);
                     sherlock_bag->get(item);
                 }
@@ -1284,7 +1285,7 @@ bool StudyPinkProgram::checkMeet(int i) const {
     }
     // Case 3: Watson
     if (arr_mv_objs->get(i)->getName() == "Watson") {
-        cout << "Watson moves, then check" << endl;
+        // cout << "Watson moves, then check" << endl;
         for (int j = 0; j < arr_mv_objs->size(); ++j) {
             // Watson meets the Criminal, return true
             if (arr_mv_objs->get(j)->getName() == "Criminal" &&
@@ -1296,16 +1297,16 @@ bool StudyPinkProgram::checkMeet(int i) const {
                 Robot *robot = dynamic_cast<Robot *>(arr_mv_objs->get(j));
                 robot->setMeet(dynamic_cast<Character *>(arr_mv_objs->get(i)), true);
                 // Check if Watson has a PassingCard
-                cout << "Watson meets Robot" << endl;
+                // cout << "Watson meets Robot" << endl;
 
-                cout << watson_bag->str() << endl;
+                // cout << watson_bag->str() << endl;
                 BaseItem * item_holding = robot->getItem() ;
-                cout << "Item holding: " << watson_bag->getItemName(item_holding) << endl;
-                cout << dynamic_cast<Watson*>(arr_mv_objs->get(i))->getHp() << endl;
+                // cout << "Item holding: " << watson_bag->getItemName(item_holding) << endl;
+                // cout << dynamic_cast<Watson*>(arr_mv_objs->get(i))->getHp() << endl;
 
 
                 BaseItem *passingCard = watson_bag->check(PASSING_CARD);
-                cout << "Check PassingCard: " << watson_bag->getItemName(passingCard) << endl;
+                // cout << "Check PassingCard: " << watson_bag->getItemName(passingCard) << endl;
 
                 bool pass = false;
                 if (passingCard != nullptr && passingCard->canUse(watson, robot)) {
@@ -1313,7 +1314,7 @@ bool StudyPinkProgram::checkMeet(int i) const {
                     watson_bag->get(passingCard);
 
                     // Receive the item from Robot
-                    cout << "Used PassingCard" << endl;
+                    // cout << "Used PassingCard" << endl;
                     watson_bag->insert(robot->getItem());
                     pass = true;
                 }
@@ -1329,7 +1330,7 @@ bool StudyPinkProgram::checkMeet(int i) const {
                                 watson_bag->insert(robot->getItem());
 
                             } else {
-                                watson->setHp(watson->getHp() - watson->getHp() * 0.05);
+                                watson->setHP(watson->getHp() - watson->getHp() * 0.05);
                             }
                             break;
                         case SW: // RobotSW
@@ -1337,8 +1338,8 @@ bool StudyPinkProgram::checkMeet(int i) const {
                                 watson_bag->insert(robot->getItem());
 
                             } else {
-                                watson->setExp(watson->getExp() - watson->getExp() * 0.15);
-                                watson->setHp(watson->getHp() - watson->getHp() * 0.15);
+                                watson->setEXP(watson->getExp() - watson->getExp() * 0.15);
+                                watson->setHP(watson->getHp() - watson->getHp() * 0.15);
                             }
                             break;
                         case C: // RobotC
@@ -1346,8 +1347,8 @@ bool StudyPinkProgram::checkMeet(int i) const {
                             // Watson could not catch the criminal because he was held back by RobotC.
                             // However, Watson will still destroy the robot and receive the item this robot holds.
                             watson_bag->insert(robot->getItem());
-                            cout << "Watson meets RobotC" << endl;
-                            cout << watson_bag->str() << endl;
+                            // cout << "Watson meets RobotC" << endl;
+                            // cout << watson_bag->str() << endl;
                             break;
                     }
                 }
@@ -1381,14 +1382,14 @@ bool StudyPinkProgram::checkMeet(int i) const {
     }
     // Case 4: Robot
     if (arr_mv_objs->get(i)->getName().substr(0, 5) == "Robot") {
-        cout << "Robot moves, then check" << endl;
+        // cout << "Robot moves, then check" << endl;
         for (int j = 0; j < arr_mv_objs->size(); ++j) {
             if (arr_mv_objs->get(j)->getName() == "Sherlock" &&
                 arr_mv_objs->get(i)->getCurrentPosition().isEqual(arr_mv_objs->get(j)->getCurrentPosition()) && dynamic_cast<Robot *>(arr_mv_objs->get(i))->getMeet(dynamic_cast<Character *>(arr_mv_objs->get(j))) == false) {
                 Robot *robot = dynamic_cast<Robot *>(arr_mv_objs->get(i));
                 robot->setMeet(dynamic_cast<Character *>(arr_mv_objs->get(j)), true);
                 // Check if Sherlock has an ExemptionCard
-                cout << robot->getRobotType() << " meets Sherlock" << endl;
+                // cout << robot->getRobotType() << " meets Sherlock" << endl;
                 bool isexemptionCard = false;
                 BaseItem *exemptionCard = sherlock_bag->check(EXCEMPTION_CARD);
                 if (exemptionCard != nullptr && exemptionCard->canUse(sherlock, robot)) {
@@ -1401,34 +1402,34 @@ bool StudyPinkProgram::checkMeet(int i) const {
                 // Handle each type of robot
                 switch (robot->getRobotType()) {
                     case S: // RobotS
-                        cout << "Sherlock meets RobotS" << endl;
+                        // cout << "Sherlock meets RobotS" << endl;
                         if (sherlock->getExp() > 400) {
                             sherlock_bag->insert(robot->getItem());
 
                         } else {
                             if (!isexemptionCard)
-                                sherlock->setExp(sherlock->getExp() - sherlock->getExp() * 0.1);
+                                sherlock->setEXP(sherlock->getExp() - sherlock->getExp() * 0.1);
                         }
                         break;
                     case W: // RobotW
-                        cout << "Sherlock meets RobotW" << endl;
+                        // cout << "Sherlock meets RobotW" << endl;
                         sherlock_bag->insert(robot->getItem());
                         break;
 
                     case SW: // RobotSW
-                        cout << "Sherlock meets RobotSW" << endl;
+                        // cout << "Sherlock meets RobotSW" << endl;
                         if (sherlock->getExp() > 300 && sherlock->getHp() > 335) {
                             sherlock_bag->insert(robot->getItem());
 
                         } else {
                             if (!isexemptionCard)
-                                sherlock->setExp(sherlock->getExp() - sherlock->getExp() * 0.15);
+                                sherlock->setEXP(sherlock->getExp() - sherlock->getExp() * 0.15);
                             if (!isexemptionCard)
-                                sherlock->setHp(sherlock->getHp() - sherlock->getHp() * 0.15);
+                                sherlock->setHP(sherlock->getHp() - sherlock->getHp() * 0.15);
                         }
                         break;
                     case C: // RobotC
-                        cout << "Sherlock meets RobotC" << endl;
+                        // cout << "Sherlock meets RobotC" << endl;
                         if (sherlock->getExp() > 500) {
                             sherlock->move(arr_mv_objs->get(0)->getCurrentPosition());
                             return true; // Sherlock caught the criminal
@@ -1438,10 +1439,10 @@ bool StudyPinkProgram::checkMeet(int i) const {
                         break;
                 }
                 // Check if Sherlock has any item to heal or increase HP or EXP
-                cout << sherlock_bag->str() << endl;
+                // cout << sherlock_bag->str() << endl;
                 BaseItem *item = sherlock_bag->check();
                 if (item != nullptr && item->canUse(sherlock, robot)) {
-                    cout << "Sherlock uses Item" << endl;
+                    // cout << "Sherlock uses Item" << endl;
                     item->use(sherlock, robot);
                     sherlock_bag->get(item);
                 }
@@ -1451,12 +1452,12 @@ bool StudyPinkProgram::checkMeet(int i) const {
                 Robot *robot = dynamic_cast<Robot *>(arr_mv_objs->get(i));
                 robot->setMeet(dynamic_cast<Character *>(arr_mv_objs->get(j)), true);
                 // Check if Watson has a PassingCard
-                cout << "Robot meets Watson" << endl;
+                // cout << "Robot meets Watson" << endl;
 
                 BaseItem *passingCard = watson_bag->check(PASSING_CARD);
                 bool pass = false;
                 if (passingCard != nullptr && passingCard->canUse(watson, robot)) {
-                    cout << "Used PassingCard" << endl;
+                    // cout << "Used PassingCard" << endl;
                     passingCard->use(watson, robot);
                     watson_bag->get(passingCard);
                     // Remove Robot from the array of moving objects
@@ -1466,9 +1467,9 @@ bool StudyPinkProgram::checkMeet(int i) const {
                     pass = true;
                 }
                 // Handle each type of robot
-                cout << watson_bag->str() << endl;
+                // cout << watson_bag->str() << endl;
                 BaseItem * item_holding = robot->getItem() ;
-                cout << "Item holding: " << watson_bag->getItemName(item_holding) << endl;
+                // cout << "Item holding: " << watson_bag->getItemName(item_holding) << endl;
                 if (pass == false)
                 {
                     switch (robot->getRobotType()) {
@@ -1477,12 +1478,11 @@ bool StudyPinkProgram::checkMeet(int i) const {
                             break;
                         case W: // RobotW
                             if (watson->getHp() > 350) {
-                                cout << "Watson's HP is greater than 350. Defeat the robot and receive the item"
-                                     << endl;
+                                // cout << "Watson's HP is greater than 350. Defeat the robot and receive the item" << endl;
                                 watson_bag->insert(robot->getItem());
 
                             } else {
-                                watson->setHp(watson->getHp() - watson->getHp() * 0.05);
+                                watson->setHP(watson->getHp() - watson->getHp() * 0.05);
                             }
                             break;
                         case SW: // RobotSW
@@ -1490,8 +1490,8 @@ bool StudyPinkProgram::checkMeet(int i) const {
                                 watson_bag->insert(robot->getItem());
 
                             } else {
-                                watson->setExp(watson->getExp() - watson->getExp() * 0.15);
-                                watson->setHp(watson->getHp() - watson->getHp() * 0.15);
+                                watson->setEXP(watson->getExp() - watson->getExp() * 0.15);
+                                watson->setHP(watson->getHp() - watson->getHp() * 0.15);
                             }
                             break;
                         case C: // RobotC
@@ -1503,7 +1503,7 @@ bool StudyPinkProgram::checkMeet(int i) const {
                     }
                 }
                 // Check if Watson has any item to heal or increase HP or EXP
-                cout << "Checking Watson's bag" << endl;
+                // cout << "Checking Watson's bag" << endl;
                 BaseItem *item = watson_bag->check();
                 if (item != nullptr && item->canUse(watson, robot)) {
                     item->use(watson, robot);
