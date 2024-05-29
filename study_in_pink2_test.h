@@ -152,8 +152,8 @@ public:
 
     int getHp() const  { return hp; }
     int getExp() const  { return exp; }
-    void setHp(float init_hp)  {
-        cout << "Sherlock setHp: " << init_hp << "\n";
+    void setHP(float init_hp)  {
+        // cout << "Sherlock setHP: " << init_hp << "\n";
         if (init_hp < 0.0f) {
             this->hp = 0;
         } else if (init_hp > 500.0f) {
@@ -162,8 +162,8 @@ public:
             this->hp = static_cast<int>(std::ceil(init_hp));
         }
     }
-    void setExp(float init_exp)  {
-        cout << "Sherlock setExp: " << init_exp << "\n";
+    void setEXP(float init_exp)  {
+        // cout << "Sherlock setEXP: " << init_exp << "\n";
         if (init_exp < 0.0f) {
             this->exp = 0;
         } else if (init_exp > 900.0f) {
@@ -192,7 +192,7 @@ public:
     string str() const;
     int getHp() const { return hp; }
     int getExp() const { return exp; }
-    void setHp(float init_hp)  {
+    void setHP(float init_hp)  {
         if (init_hp < 0.0f) {
             this->hp = 0;
         } else if (init_hp > 500.0f) {
@@ -201,7 +201,7 @@ public:
             this->hp = static_cast<int>(std::ceil(init_hp));
         }
     }
-    void setExp(float init_exp)  {
+    void setEXP(float init_exp)  {
         if (init_exp < 0.0f) {
             this->exp = 0;
         } else if (init_exp > 900.0f) {
@@ -514,74 +514,30 @@ public:
              << "--"
              << sherlock->str() << "--|--" << watson->str() << "--|--" << criminal->str() << endl;
     }
-    void run(std::ostream &OUTPUT);
     void run(bool verbose) {
-        // Note: This is a sample code. You can change the implementation as you like.
-        // TODO
-        for (int istep = 0; istep < config->num_steps; ++istep) {
-            for (int i = 0; i < arr_mv_objs->size(); ++i) {
-                arr_mv_objs->get(i)->move();
-                if (isStop()) {
-                    printStep(istep);
-                    break;
-                }
-                if (verbose) {
-                    printStep(istep);
-                }
-            }
-            // Criminal process
-            // Watson process
-            // Sherlock process
-        }
-        printResult();
-    }
-    void printInfo(int si, int i, ofstream &OUTPUT)
-    {
-        OUTPUT << endl
-               << "*************AFTER MOVE*************" << endl;
-        OUTPUT
-                << "ROUND : " << si << " - TURN : " << i << endl;
-        stringstream ss(arr_mv_objs->str());
-        string lineArr = "";
-        getline(ss, lineArr, 'C');
-        OUTPUT << lineArr << "]" << endl;
-        getline(ss, lineArr, ']');
-        OUTPUT << "\tC" << lineArr << "]" << endl;
-        while (getline(ss, lineArr, ']'))
-        {
-            if (lineArr.length() > 0)
-                OUTPUT << "\t" << lineArr.substr(1) << "]" << endl;
-        }
-        OUTPUT << "Sherlock HP_" << sherlock->getHp() << " EXP_" << sherlock->getExp() << endl
-               << "Watson HP_" << watson->getHp() << " EXP_" << watson->getExp() << endl
-               << "SherlockBag : " << sherlock_bag->str() << endl
-               << "WatsonBag : " << watson_bag->str() << endl;
-    }
-    void run(bool verbose, ofstream &OUTPUT) {
-        bool stop = checkMeet(0) || sherlock->getHp() == 1 || watson->getHp() == 1 || criminal->getCurrentPosition().isEqual(sherlock->getCurrentPosition()) || criminal->getCurrentPosition().isEqual(watson->getCurrentPosition());
-        // bool stop = checkMeet(0) || sherlock->getHp() == 1 || watson->getHp() == 1 || criminal->getCurrentPosition().isEqual(sherlock->getCurrentPosition()) || criminal->getCurrentPosition().isEqual(watson->getCurrentPosition());
+        bool stop = checkMeet(0) || sherlock->getHp() == 1 || watson->getHp() == 1 || criminal->getCurrentPosition().isEqual(sherlock->getCurrentPosition()) || criminal->getCurrentPosition().isEqual(watson->getCurrentPosition()) || isStop();
         if (stop)
         {
-            cout << "STOP1" << endl;
+            printResult();
             return;
         }
         for (int istep = 0; istep < config->num_steps; ++istep) {
             for (int i = 0; i < arr_mv_objs->size(); ++i) {
-                cout << "ROUND : " << istep << " - TURN : " << i << endl;
                 arr_mv_objs->get(i)->move();
-
                 Robot *robot = nullptr;
                 if ((arr_mv_objs->get(i)->getName())== "Criminal")
                 {
                     stop = checkMeet(i);
                     if (stop) {
-                        cout << "STOP2" << endl;
-                        printInfo(istep, i, OUTPUT);
+                        if (verbose) {
+                            printStep(istep);
+                        }
+                        printResult();
                         return;
                     }
                     robot = Robot::create(arr_mv_objs->size(), map, criminal, sherlock, watson);
                 }
-                if (robot != nullptr)
+                if (robot != nullptr && !isStop())
                 {
                     if (criminal->getCountCriminalMoves() % 3 == 0 && criminal->getCountCriminalMoves() > 0)
                     {
@@ -593,42 +549,22 @@ public:
                     }
                 }
                 stop = checkMeet(i);
-                if (isStop()) {
-                    printInfo(istep, i, OUTPUT);
+                if (isStop() || stop) {
+                    if (verbose) {
+                        printStep(istep);
+                    }
+                    printResult();
                     return;
-                    //printStep(istep);
                 }
                 if (verbose) {
-                    //printStep(istep);
+                    printStep(istep);
                 }
-                printInfo(istep, i, OUTPUT);
+            }
+        }
+        printResult();
+    }
 
-            }
-        }
-    }
-    void printMap(ofstream &OUTPUT, int roundSize) const;
     bool checkMeet(int i) const;
-    void resetMeetAllRobot() {
-        for (int i = 3; i < arr_mv_objs->size(); ++i) { // Start from 3 because the first 3 elements are Sherlock, Watson, Criminal
-            if (arr_mv_objs->get(i)->getName() == "RobotC") {
-                RobotC *robot = dynamic_cast<RobotC *>(arr_mv_objs->get(i));
-                robot->setMeet(sherlock, false);
-                robot->setMeet(watson, false);
-            } else if (arr_mv_objs->get(i)->getName() == "RobotS") {
-                RobotS *robot = dynamic_cast<RobotS *>(arr_mv_objs->get(i));
-                robot->setMeet(sherlock, false);
-                robot->setMeet(watson, false);
-            } else if (arr_mv_objs->get(i)->getName() == "RobotW") {
-                RobotW *robot = dynamic_cast<RobotW *>(arr_mv_objs->get(i));
-                robot->setMeet(sherlock, false);
-                robot->setMeet(watson, false);
-            } else if (arr_mv_objs->get(i)->getName() == "RobotSW") {
-                RobotSW *robot = dynamic_cast<RobotSW *>(arr_mv_objs->get(i));
-                robot->setMeet(sherlock, false);
-                robot->setMeet(watson, false);
-            }
-        }
-    }
     ~StudyPinkProgram();
 };
 
