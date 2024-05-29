@@ -165,7 +165,7 @@ public:
     void setExp(float init_exp)  {
         cout << "Sherlock setExp: " << init_exp << "\n";
         if (init_exp < 0.0f) {
-            this->exp = static_cast<int>(std::ceil(init_exp));
+            this->exp = 0;
         } else if (init_exp > 900.0f) {
             this->exp = 900;
         } else {
@@ -203,7 +203,7 @@ public:
     }
     void setExp(float init_exp)  {
         if (init_exp < 0.0f) {
-            this->exp = static_cast<int>(std::ceil(init_exp));
+            this->exp = 0;
         } else if (init_exp > 900.0f) {
             this->exp = 900;
         } else {
@@ -219,7 +219,7 @@ private:
     Sherlock* sherlock;
     Watson* watson;
     int count_criminal_moves;
-    Position last_position;
+    Position last_position = Position::npos;
 public:
     Criminal(int index, const Position& init_pos, Map* map, Sherlock* sherlock, Watson* watson);
     Position getNextPosition() override;
@@ -281,6 +281,7 @@ public:
 // Start part: Robot, BaseItem, BaseBag,...
 
 class Robot : public MovingObject {
+    friend class TestStudyInPink;
 protected:
     RobotType robot_type;
     BaseItem* item; // Pointer to the item the robot holds
@@ -378,6 +379,7 @@ public:
 
 // 3.11 Item classes
 class BaseItem {
+    friend class TestStudyInPink;
 private:
     // Type of the item
     ItemType type;
@@ -418,6 +420,7 @@ public:
 };
 
 class PassingCard : public BaseItem {
+    friend class TestStudyInPink;
 private:
     string challenge;
 public:
@@ -442,7 +445,7 @@ protected:
 
 public:
     BaseBag(Character* obj, int capacity);
-    virtual ~BaseBag();
+    virtual ~BaseBag() = default;
     virtual bool insert(BaseItem* item); // Add an item to the inventory
     virtual BaseItem* get(); // Use first item in bag
     virtual BaseItem* check(); // Use first item in bag
@@ -555,7 +558,7 @@ public:
                << "WatsonBag : " << watson_bag->str() << endl;
     }
     void run(bool verbose, ofstream &OUTPUT) {
-        bool stop = checkMeet(0) || sherlock->getHp() == 0 || watson->getHp() == 0 || criminal->getCurrentPosition().isEqual(sherlock->getCurrentPosition()) || criminal->getCurrentPosition().isEqual(watson->getCurrentPosition());
+        bool stop = checkMeet(0) || sherlock->getHp() == 1 || watson->getHp() == 1 || criminal->getCurrentPosition().isEqual(sherlock->getCurrentPosition()) || criminal->getCurrentPosition().isEqual(watson->getCurrentPosition());
         // bool stop = checkMeet(0) || sherlock->getHp() == 1 || watson->getHp() == 1 || criminal->getCurrentPosition().isEqual(sherlock->getCurrentPosition()) || criminal->getCurrentPosition().isEqual(watson->getCurrentPosition());
         if (stop)
         {
